@@ -1,0 +1,18 @@
+<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>442</x><y>220</y><w>400</w><h>270</h></coordinates><panel_attributes>Sensor
+--
+-SpaceID: String
+-SpaceName:String
+-PointID: String
+-PointName: String
+-SignalID: String
+-Unit: String
+-Value: String
+-Type: String
+-Timestamp: String
+--
++CreateSpace(String SpaceName)
++CreatePoint(String PointName)
++CreateSignal(String Unit, String Value, String Type, String Timestamp)
++RetrieveSpace(String SpaceName)
++RetrievePoint(String PointName)
++RetrieveSignal(String Timestamp)</panel_attributes><additional_attributes></additional_attributes></element></diagram>

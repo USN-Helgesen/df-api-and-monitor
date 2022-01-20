@@ -16,7 +16,7 @@ headers = {
 }
 """
 value = 1212
-timestamp = 2
+timestamp = datetime.now()
 
 query = """mutation CREATE_SIGNAL(
   $timestamp: Timestamp!
@@ -48,7 +48,7 @@ query = """mutation CREATE_SIGNAL(
     }
   }
 }"""
-"""
+
 json = {
     "query": query,
     "variables": {
@@ -56,5 +56,4 @@ json = {
         "timestamp": str(timestamp),
         "value": value,
     },
-}"""
-print(datetime.now())
+}
