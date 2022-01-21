@@ -1,4 +1,4 @@
-<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>28</x><y>220</y><w>400</w><h>270</h></coordinates><panel_attributes>Sensor
+<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><element><id>UMLClass</id><coordinates><x>348</x><y>260</y><w>400</w><h>270</h></coordinates><panel_attributes>Sensor
 --
 -SpaceID: String
 -SpaceName:String
