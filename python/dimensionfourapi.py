@@ -43,15 +43,25 @@ def create_point(name, space_id, target, headers):
     }
     send_post(target, json, headers)
 
-def create_signal(value, unit, type, timestamp, point_id, target, headers):
+def create_signal(value, unit, signal_type, timestamp, point_id, target, headers):
+    """
+    Posts new signal to Dimension Four.
+    :param value: str
+    :param unit: str
+    :param signal_type: str
+    :param timestamp: str
+    :param point_id: str
+    :param target: str
+    :param headers: str
+    :return: None
     """
 
-    """
-    
     query = """mutation CREATE_SIGNAL(
       $timestamp: Timestamp!
       $pointId: ID!
       $value: String!
+      $unit: UnitType!
+      $type: String!
       ){
       signal {
         create(input: {
@@ -82,11 +92,11 @@ def create_signal(value, unit, type, timestamp, point_id, target, headers):
     json = {
         "query": query,
         "variables": {
-            "pointId": POINT_ID,
+            "pointId": point_id,
             "timestamp": str(timestamp),
             "value": str(value),
             "unit": str(unit),
-            "type": str(type),
+            "type": str(signal_type),
         },
     }
     send_post(target, json, headers)
