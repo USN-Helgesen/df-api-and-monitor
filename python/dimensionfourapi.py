@@ -1,45 +1,64 @@
 import requests
 from datetime import datetime
 
-def create_space(name, target, headers):
+def create_header(tenant_id, tenant_key):
+  """
+  Function description
+  """
+  headers = {
+      "x-tenant-id": tenant_id,
+      "x-tenant-key": tenant_key,
+  }
+  return headers
+
+def create_space(space_name, target, headers):
     """
     Function description
     """
 
     query = """mutation CREATE_SPACE(
-      $name: String!
-      ){
-      space {
-        create(input: { name: $name}) {
-          id
-          name
+        $spaceName: String!
+        ){
+        space {
+          create(input: { name: $spaceName}) {
+            id
+            name
+          }
         }
-      }
-    }"""
+      }"""
+
     json = {
         "query": query,
         "variables":{
-            "name": str(name),
+            "spaceName": str(space_name),
         },
     }
     send_post(target, json, headers)
 
-def create_point(name, space_id, target, headers):
+def create_point(point_name, space_id, target, headers):
     """
 
     """
-    query = """mutation CREATE_POINT {
-      point {
-        create(input: { 
-            spaceId: "<insert_spaceId>"
-            name: "Our device with sensors" 
-        }){
-          id
+    query = """mutation CREATE_POINT(
+        $spaceId: ID!
+        $pointName: String!
+        ){
+        point {
+          create(input: { 
+              spaceId: $spaceId
+              name: $pointName
+          }){
+            id
+          }
         }
-      }
-    }"""
-    json = {
+      }"""
 
+    json = {
+        "query": query,
+        "variables":{
+            "spaceId": str(space_id),
+            "pointName": str(point_name),
+        },
     }
     send_post(target, json, headers)
 
@@ -57,61 +76,93 @@ def create_signal(value, unit, signal_type, timestamp, point_id, target, headers
     """
 
     query = """mutation CREATE_SIGNAL(
-      $timestamp: Timestamp!
-      $pointId: ID!
-      $value: String!
-      $unit: UnitType!
-      $type: String!
-      ){
-      signal {
-        create(input: {
-          pointId: $pointId
-          signals: [
-            {
-              unit: $unit
-              value: $value
-              type: $type
-              timestamp: $timestamp
+        $timestamp: Timestamp!
+        $pointId: ID!
+        $value: Float!
+        $unit: UnitType!
+        $type: String!
+        ){
+        signal {
+          create(input: {
+            pointId: $pointId
+            signals: [
+              {
+                unit: $unit
+                value: $value
+                type: $type
+                timestamp: $timestamp
+              }
+            ]
+          }) {
+            id
+            timestamp
+            createdAt
+            pointId
+            unit
+            type
+            data {
+              numericValue
+              rawValue
             }
-          ]
-        }) {
-          id
-          timestamp
-          createdAt
-          pointId
-          unit
-          type
-          data {
-            numericValue
-            rawValue
           }
         }
-      }
-    }"""
+      }"""
 
     json = {
         "query": query,
         "variables": {
             "pointId": point_id,
             "timestamp": str(timestamp),
-            "value": str(value),
+            "value": float(value),
             "unit": str(unit),
             "type": str(signal_type),
         },
     }
     send_post(target, json, headers)
 
-def list_spaces():
+def list_spaces(target, headers):
     """
     
     """
-    return
+    query = """query LIST_SPACES_WITH_POINTS {
+        spaces {
+            id
+            name
+            points {
+              id
+              name
+            }
+          }
+      }"""
 
-def list_points():
+    json = {
+      "query": query,
+    }
+
+    ans = send_request(target, json, headers)
+    return ans
+
+def list_points(target, headers):
     """
 
     """
-    return
+    query = """query LIST_POINTS_WITH_SPACE {
+        points {
+            id
+            name
+            space {
+              id
+              name
+            }
+          }
+        }"""
+
+    json = {
+      "query": query,
+    }
+
+    ans = send_request(target, json, headers)
+    return ans
 
 def list_signals():
     """
@@ -126,7 +177,6 @@ def retrieve_latest_signal():
     return
 
 def send_post(target, json, headers):
-    print("Contacting Dimension Four...")
     try:
         res = requests.post(target, json=json, headers=headers)
     except Exception as e:
@@ -142,5 +192,22 @@ def send_post(target, json, headers):
             print("Query error!")
             print(res_json["errors"])
         else:
-            print("Success!")
-            print(res_json["data"])
+            return
+
+def send_request(target, json, headers):
+    try:
+        res = requests.post(target, json=json, headers=headers)
+    except Exception as e:
+        print(f"Error!: {e}")
+
+    if res.status_code != 200:
+        print("Send error!")
+        print(res.text)
+
+    else:
+        res_json = res.json()
+        if "errors" in res_json.keys():
+            print("Query error!")
+            print(res_json["errors"])
+        else:
+            return res_json["data"]
