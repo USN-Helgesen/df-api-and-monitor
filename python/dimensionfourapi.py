@@ -1,4 +1,6 @@
 import requests
+import json
+import csv
 from datetime import datetime
 
 def create_header(tenant_id, tenant_key):
@@ -33,7 +35,7 @@ def create_space(space_name, target, headers):
             "spaceName": str(space_name),
         },
     }
-    send_post(target, json, headers)
+    ans = send_post(target, json, headers)
 
 def create_point(point_name, space_id, target, headers):
     """
@@ -60,7 +62,7 @@ def create_point(point_name, space_id, target, headers):
             "pointName": str(point_name),
         },
     }
-    send_post(target, json, headers)
+    ans = send_post(target, json, headers)
 
 def create_signal(value, unit, signal_type, timestamp, point_id, target, headers):
     """
@@ -78,7 +80,7 @@ def create_signal(value, unit, signal_type, timestamp, point_id, target, headers
     query = """mutation CREATE_SIGNAL(
         $timestamp: Timestamp!
         $pointId: ID!
-        $value: Float!
+        $value: String!
         $unit: UnitType!
         $type: String!
         ){
@@ -113,12 +115,12 @@ def create_signal(value, unit, signal_type, timestamp, point_id, target, headers
         "variables": {
             "pointId": point_id,
             "timestamp": str(timestamp),
-            "value": float(value),
+            "value": str(value),
             "unit": str(unit),
             "type": str(signal_type),
         },
     }
-    send_post(target, json, headers)
+    ans = send_post(target, json, headers)
 
 def list_spaces(target, headers):
     """
@@ -139,7 +141,7 @@ def list_spaces(target, headers):
       "query": query,
     }
 
-    ans = send_request(target, json, headers)
+    ans = send_post(target, json, headers)
     return ans
 
 def list_points(target, headers):
@@ -161,20 +163,99 @@ def list_points(target, headers):
       "query": query,
     }
 
-    ans = send_request(target, json, headers)
+    ans = send_post(target, json, headers)
     return ans
 
-def list_signals():
+def list_signals(point_id, target, headers):
     """
 
     """
-    return
+    query = """query LATEST_SIGNALS(
+        $pointId: String!
+        ){
+          signalsConnection(
+            where: {pointId: {_EQ: $pointId}}
+            sort: {field: "timestamp", order:DESC}
+          ){
+            edges {
+              node {
+                id
+                timestamp
+                createdAt
+                type
+                unit
+                pointId
+                data {
+                  numericValue
+                  rawValue
+                }
+              }
+            }
+          }
+        }"""
 
-def retrieve_latest_signal():
+    json = {
+        "query": query,
+        "variables": {
+            "pointId": point_id,
+        },
+    }
+    ans = send_post(target, json, headers)
+    return ans
+
+def retrieve_latest_signal(point_id, target, headers, get_dictionary=False):
     """
 
     """
-    return
+    query = """query LATEST_SIGNALS(
+        $pointId: String!
+        ){
+          signalsConnection(
+            where: {pointId: {_EQ: $pointId}}
+            paginate: {last:1}
+          ){
+            edges {
+              node {
+                id
+                timestamp
+                createdAt
+                type
+                unit
+                pointId
+                data {
+                  numericValue
+                  rawValue
+                }
+              }
+            }
+          }
+        }"""
+
+    json = {
+        "query": query,
+        "variables": {
+            "pointId": point_id,
+        },
+    }
+    ans = send_post(target, json, headers)
+    if get_dictionary == True:
+      return ans
+    else:
+      raw_signal = [ans['signalsConnection']['edges'][0]['node']['data']['rawValue'],
+                  ans['signalsConnection']['edges'][0]['node']['timestamp']]
+      return raw_signal
+
+def save_data(data, path, is_json=False):
+    """
+    
+    """
+    if is_json == True:
+      with open('data.json', 'a', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
+    else:
+        with open('data.csv', 'a', encoding = 'utf-8', newline='') as file:
+          writer = csv.writer(file)
+          writer.writerow(data)
 
 def send_post(target, json, headers):
     try:
@@ -192,22 +273,7 @@ def send_post(target, json, headers):
             print("Query error!")
             print(res_json["errors"])
         else:
-            return
-
-def send_request(target, json, headers):
-    try:
-        res = requests.post(target, json=json, headers=headers)
-    except Exception as e:
-        print(f"Error!: {e}")
-
-    if res.status_code != 200:
-        print("Send error!")
-        print(res.text)
-
-    else:
-        res_json = res.json()
-        if "errors" in res_json.keys():
-            print("Query error!")
-            print(res_json["errors"])
-        else:
+            print("Success!")
             return res_json["data"]
+
+
