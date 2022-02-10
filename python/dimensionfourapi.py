@@ -4,14 +4,14 @@ import csv
 from datetime import datetime
 
 def create_header(tenant_id, tenant_key):
-  """
-  Function description
-  """
-  headers = {
-      "x-tenant-id": tenant_id,
-      "x-tenant-key": tenant_key,
-  }
-  return headers
+    """
+    Function description
+    """
+    headers = {
+        "x-tenant-id": tenant_id,
+        "x-tenant-key": tenant_key,
+    }
+    return headers
 
 def create_space(space_name, target, headers):
     """
@@ -245,7 +245,7 @@ def retrieve_latest_signal(point_id, target, headers, get_dictionary=False):
                   ans['signalsConnection']['edges'][0]['node']['timestamp']]
       return raw_signal
 
-def save_data(data, path, is_json=False):
+def save_data(data, is_json=False):
     """
     
     """
@@ -256,6 +256,36 @@ def save_data(data, path, is_json=False):
         with open('data.csv', 'a', encoding = 'utf-8', newline='') as file:
           writer = csv.writer(file)
           writer.writerow(data)
+
+def mqtt_credentials(target, headers):
+    """
+    Function description
+    """
+    query = """query GET_MQTT_CREDENTIALS {
+        tenant {
+        settings {
+          mqtt {
+            url
+            port
+            username
+            password
+          }
+        }
+      }
+    }"""
+
+    json = {
+      "query": query,
+    }
+
+    ans = send_post(target, json, headers)
+    ans = ans['data']['tenant']['settings']['mqtt']
+    return ans
+
+def send_mqtt(value, unit, type, timestamp, point_id, headers):
+    """
+    Function description
+    """
 
 def send_post(target, json, headers):
     try:
