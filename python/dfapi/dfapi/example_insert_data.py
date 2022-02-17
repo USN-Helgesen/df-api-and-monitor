@@ -1,8 +1,9 @@
 import requests
 import credentials as cred
-import dimensionfourapi as dfapi
+import dfapi
 import time
-import pprint as p
+from datetime import datetime
+import random
 
 target = "https://iot.dimensionfour.io/graph"
 
@@ -15,6 +16,9 @@ headers = dfapi.create_header(TENANT_ID, TENANT_KEY)
 
 if __name__ == "__main__":
     while True:
-        signal = dfapi.retrieve_latest_signal(POINT_ID, target, headers)
-        p.pprint(signal)
+        value = random.randrange(273,300)
+        b = "KELVINS"
+        c = "Test_Sample"
+        timestamp = datetime.now()
+        dfapi.create_signal(value, b, c, timestamp, POINT_ID, target, headers)
         time.sleep(10)

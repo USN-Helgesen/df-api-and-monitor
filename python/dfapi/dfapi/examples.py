@@ -2,10 +2,11 @@ import requests
 import credentials as cred
 import pprint as p
 import time
+import random
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from datetime import datetime
-import dimensionfourapi as dfapi
+import dfapi
 
 target = "https://iot.dimensionfour.io/graph"
 
@@ -18,7 +19,7 @@ SPACE_ID = cred.SPACE_ID
 
 headers = dfapi.create_header(TENANT_ID, TENANT_KEY)
 
-state = "save" # "post", "read", "save", "log"
+state = "log" # "post", "read", "save", "log"
 
 
 if state == "post":
@@ -45,16 +46,13 @@ elif state == "save":
     signal = dfapi.retrieve_latest_signal(POINT_ID, target, headers,True)
     dfapi.save_data(signal, True)
 
-"""
 elif state == "log":
-    time_step = 5 #[seconds]
+    time_step = 1 #[seconds]
     DATA_POINTS = 100
-    iteration = 1
     x_length = DATA_POINTS
     temperature_minimum = 15 # [degrees Celsius]
     temperature_maximum = 30 # [degrees Celsius]
     y_range = [temperature_minimum, temperature_maximum]
-    data = []
 
     log_plot = plt.figure()
     a_line = log_plot.add_subplot(1, 1, 1)
@@ -62,5 +60,23 @@ elif state == "log":
     y_points = [0] * x_length
     a_line.set_ylim(y_range)
 
-    line, = a_line.plot()
-    """
+    line, = a_line.plot(x_points, y_points)
+
+    plt.title('Temperature')
+    plt.xlabel('Time [s]')
+    plt.ylabel('Temperature [C]')
+    plt.grid()
+
+    def logger_function(dump, y_points):
+        value = random.randrange(15,30)
+        time.sleep(time_step)
+        y_points.append(value)
+        y_points = y_points[-x_length:]
+        line.set_ydata(y_points)
+        return line,
+
+
+    plot_animation = animation.FuncAnimation(log_plot, logger_function,
+                    fargs=(y_points,), interval=100, blit=True)
+
+    plt.show()

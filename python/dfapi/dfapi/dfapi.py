@@ -1,11 +1,22 @@
+""" A simple API made for easy interacting with the Dimension Four back-end.
+
+This library allows the user to easily interact with the Dimension Four GraphQL back-end
+without knowing all the json structuring used.
+
+Created by Håkon Helgesen, 2022.
+Released into the public domain.
+"""
+
 import requests
 import json
 import csv
 from datetime import datetime
 
 def create_header(tenant_id, tenant_key):
-    """
-    Function description
+    """Creates a Header for accessing the Dimension Four back-end.
+    
+    :param tenant_id: str
+    :param tenant_key: str
     """
     headers = {
         "x-tenant-id": tenant_id,
@@ -14,8 +25,12 @@ def create_header(tenant_id, tenant_key):
     return headers
 
 def create_space(space_name, target, headers):
-    """
-    Function description
+    """Creates a Space in the Dimension Four back-end.
+    
+    :param space_name: str
+    :param target: str
+    :param headers: dict
+    :return: None
     """
 
     query = """mutation CREATE_SPACE(
@@ -38,8 +53,13 @@ def create_space(space_name, target, headers):
     ans = send_post(target, json, headers)
 
 def create_point(point_name, space_id, target, headers):
-    """
+    """Creates a new Point in the Dimension Four back-end.
 
+    :param point_name: str
+    :param space_id: str
+    :param target: str
+    :param headers: dict
+    :return: None
     """
     query = """mutation CREATE_POINT(
         $spaceId: ID!
@@ -65,15 +85,15 @@ def create_point(point_name, space_id, target, headers):
     ans = send_post(target, json, headers)
 
 def create_signal(value, unit, signal_type, timestamp, point_id, target, headers):
-    """
-    Posts new signal to Dimension Four.
+    """Posts new signal to Dimension Four.
+
     :param value: str
     :param unit: str
     :param signal_type: str
     :param timestamp: str
     :param point_id: str
     :param target: str
-    :param headers: str
+    :param headers: dict
     :return: None
     """
 
@@ -123,8 +143,11 @@ def create_signal(value, unit, signal_type, timestamp, point_id, target, headers
     ans = send_post(target, json, headers)
 
 def list_spaces(target, headers):
-    """
-    
+    """Lists all available Spaces in the Dimension Four back-end.
+
+    :param target: str
+    :param headers: dict
+    :return: dict
     """
     query = """query LIST_SPACES_WITH_POINTS {
         spaces {
@@ -145,8 +168,11 @@ def list_spaces(target, headers):
     return ans
 
 def list_points(target, headers):
-    """
+    """Lists all available Points in the Dimension Four back-end.
 
+    :param target: str
+    :param headers: dict
+    :return: dict
     """
     query = """query LIST_POINTS_WITH_SPACE {
         points {
@@ -167,8 +193,12 @@ def list_points(target, headers):
     return ans
 
 def list_signals(point_id, target, headers):
-    """
+    """Lists all Signals belonging to specified Point in the Dimension Four back-end.
 
+    :param point_id: str
+    :param target: str
+    :param headers: dict
+    :return: dict
     """
     query = """query LATEST_SIGNALS(
         $pointId: String!
@@ -204,8 +234,14 @@ def list_signals(point_id, target, headers):
     return ans
 
 def retrieve_latest_signal(point_id, target, headers, get_dictionary=False):
-    """
+    """Retrieves the latest stored signal in the Dimension Four back-end.
+    Returns signal as either a list containing the value and timestamp, or the entire dictionary.
 
+    :param point_id: str
+    :param target: str
+    :param headers: dict
+    :param get_dictionary: bool, optional
+    :return: list or dict
     """
     query = """query LATEST_SIGNALS(
         $pointId: String!
@@ -246,8 +282,11 @@ def retrieve_latest_signal(point_id, target, headers, get_dictionary=False):
       return raw_signal
 
 def save_data(data, is_json=False):
-    """
-    
+    """Saves data in either CSV or Json format.
+
+    :param data: list or dict
+    :param is_json: bool
+    :return: None
     """
     if is_json == True:
       with open('data.json', 'a', encoding='utf-8') as file:
@@ -257,37 +296,14 @@ def save_data(data, is_json=False):
           writer = csv.writer(file)
           writer.writerow(data)
 
-def mqtt_credentials(target, headers):
-    """
-    Function description
-    """
-    query = """query GET_MQTT_CREDENTIALS {
-        tenant {
-        settings {
-          mqtt {
-            url
-            port
-            username
-            password
-          }
-        }
-      }
-    }"""
-
-    json = {
-      "query": query,
-    }
-
-    ans = send_post(target, json, headers)
-    ans = ans['data']['tenant']['settings']['mqtt']
-    return ans
-
-def send_mqtt(value, unit, type, timestamp, point_id, headers):
-    """
-    Function description
-    """
-
 def send_post(target, json, headers):
+    """Sends request to Dimension Four back-end.
+
+    :param target: str
+    :param json: dict
+    :param headers: dict
+    :return: dict
+    """
     try:
         res = requests.post(target, json=json, headers=headers)
     except Exception as e:
@@ -305,5 +321,3 @@ def send_post(target, json, headers):
         else:
             print("Success!")
             return res_json["data"]
-
-
