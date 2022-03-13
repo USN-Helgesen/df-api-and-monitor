@@ -150,13 +150,17 @@ def list_spaces(target, headers):
     :return: dict
     """
     query = """query LIST_SPACES_WITH_POINTS {
-        spaces {
-            id
-            name
-            points {
+        spacesConnection {
+          edges {
+            node {
               id
               name
+              points {
+                id
+                name
+              }
             }
+          }
           }
       }"""
 
@@ -175,15 +179,19 @@ def list_points(target, headers):
     :return: dict
     """
     query = """query LIST_POINTS_WITH_SPACE {
-        points {
-            id
-            name
-            space {
+        pointsConnection {
+          edges {
+            node {
               id
               name
+              space {
+                id
+                name
+              }
             }
-          }
-        }"""
+            }
+        }
+      }"""
 
     json = {
       "query": query,
@@ -307,7 +315,7 @@ def send_post(target, json, headers):
     try:
         res = requests.post(target, json=json, headers=headers)
     except Exception as e:
-        print(f"Error!: {e}")
+        print("Error!: %s" %e)
 
     if res.status_code != 200:
         print("Send error!")

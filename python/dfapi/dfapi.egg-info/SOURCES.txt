@@ -1,0 +1,13 @@
+README.rst
+pyproject.toml
+setup.py
+dfapi/__init__.py
+dfapi/dfapi.py
+dfapi/example_insert_data.py
+dfapi/example_pi_log.py
+dfapi/example_read_data.py
+dfapi/examples.py
+dfapi.egg-info/PKG-INFO
+dfapi.egg-info/SOURCES.txt
+dfapi.egg-info/dependency_links.txt
+dfapi.egg-info/top_level.txt

@@ -1,2 +1,9 @@
 
 python/credentials.py
+python/dfapi/dfapi/__pycache__/credentials.cpython-37.pyc
+*.pyc
+*.whl
+*.gz
+*.toml
+python/dfapi/setup.py
+python/dfapi/setup.py

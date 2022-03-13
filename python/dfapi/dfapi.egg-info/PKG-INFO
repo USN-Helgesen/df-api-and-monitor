@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: dfapi
+Version: 0.1.2
+Summary: A library for interacting with the Dimension Four back-end.
+Home-page: https://github.com/USN-Helgesen/df-api-and-monitor
+Author: Håkon Helgesen
+Author-email: helgesen.haakon@gmail.com
+License: Public Domain
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Education
+Classifier: License :: Public Domain
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+
+UNKNOWN
+

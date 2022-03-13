@@ -7,8 +7,19 @@ Realeased into the public domain.
 #define DimensionFourApi_h
 
 #include "Arduino.h"
+#include "ArduinoJson.h"
+#include "ArduinoHttpClient.h"
 
 class DimensionFourApi{
-public:
-
+    public:
+        DimensionFourApi();
+        void initStream(Stream *print, HttpClient *client);
+        float ReadLatestSignal(const char* PointId, const char* TenantId, const char* TenantToken, const char* Server);
+        void PostSignal(float Signal, char* timestamp, const char* PointId, const char* TenantId, const char* TenantToken, const char* Server);        
+    private:
+        String ContactServer();
+        Stream * printer;
+        HttpClient * httpclient;
 };
+
+#endif

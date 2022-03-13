@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from datetime import datetime
 import dfapi
+import credentials as cred
 
 target = "https://iot.dimensionfour.io/graph"
 
@@ -19,7 +20,7 @@ SPACE_ID = cred.SPACE_ID
 
 headers = dfapi.create_header(TENANT_ID, TENANT_KEY)
 
-state = "log" # "post", "read", "save", "log"
+state = "read" # "post", "read", "space", "save", "log"
 
 
 if state == "post":
@@ -36,6 +37,9 @@ elif state == "read":
         signal = dfapi.retrieve_latest_signal(POINT_ID, target, headers)
         p.pprint(signal)
         time.sleep(10)
+
+elif state == "space":
+    dfapi.create_space("test_space", target, headers)
 
 elif state == "save":
     #Save as CSV:
