@@ -5,7 +5,13 @@ using System.Threading.Tasks;
 
 namespace DimensionFourMonitor.Models
 {
-    public class Class
+    public class Signal
     {
+        public string SignalId { get; set; }
+        public string SignalType { get; set; }
+        public string SignalUnit { get; set; }
+        public float SignalValue { get; set; }
+        public string SignalTimestamp { get; set; }
+
     }
 }

@@ -46,9 +46,13 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
-            "HotChocolate": {
+            "GraphQL.Client": {
               "target": "Package",
-              "version": "[12.7.0, )"
+              "version": "[4.0.2, )"
+            },
+            "GraphQL.Client.Serializer.Newtonsoft": {
+              "target": "Package",
+              "version": "[4.0.2, )"
             }
           },
           "imports": [

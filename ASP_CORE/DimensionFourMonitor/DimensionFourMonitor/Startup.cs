@@ -8,6 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GraphQL.Client.Http;
+using GraphQL.Client.Abstractions;
+using GraphQL.Client.Serializer.Newtonsoft;
+using DimensionFourMonitor.Models;
 
 namespace DimensionFourMonitor
 {
@@ -23,10 +27,14 @@ namespace DimensionFourMonitor
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IGraphQLClient>(s => new GraphQLHttpClient(Configuration["GraphQLURI"], new NewtonsoftJsonSerializer()));
+            services.AddScoped<QueryList>();
+            services.AddControllers();
             services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

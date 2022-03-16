@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace DimensionFourMonitor.Models
 {
-    public class Space
+    public class ResponseSpaceCollectionType
     {
-        public string SpaceId { get; set; }
-        public string SpaceName { get; set; }
+        public List<Space> Spaces { get; set; }
     }
 }

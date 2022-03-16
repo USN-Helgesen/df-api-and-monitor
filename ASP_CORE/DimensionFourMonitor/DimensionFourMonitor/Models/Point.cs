@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 
 namespace DimensionFourMonitor.Models
 {
-    public class Class
+    public class Point
     {
+        public string PointId { get; set; }
+        public string PointName { get; set; }
     }
 }
