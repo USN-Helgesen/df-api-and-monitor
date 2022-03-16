@@ -8,11 +8,23 @@ Realeased into the public domain.
 #include "ArduinoJson.h"
 #include "ArduinoHttpClient.h"
 
+#define DEBUG 1
+
+#if DEBUG == 1
+#define debug(x) printer->print(x)
+#define debugln(x) printer->println(x)
+#define debugJson(x,y) serializeJsonPretty(x,y)
+#else
+#define debug(x)
+#define debugln(x)
+#define debugJson(x,y)
+#endif
+
 DimensionFourApi::DimensionFourApi(){
 
 }
 
-void DimensionFourApi::initStream(Stream *print, HttpClient *client){
+void DimensionFourApi::InitStream(Stream *print, HttpClient *client){
     printer = print;
     httpclient = client;
 }
@@ -53,8 +65,8 @@ float DimensionFourApi::ReadLatestSignal(const char* pointId, const char* tenant
     variables["pointId"] = pointId;
 
     serializeJson(doc, postData);
-    serializeJsonPretty(doc, Serial);
-
+    debugJson(doc, Serial);
+    debugln("Contacting Server");
     httpclient->beginRequest();
     httpclient->post("/graph");
     httpclient->sendHeader(HTTP_HEADER_CONTENT_TYPE, "application/json");
@@ -65,21 +77,22 @@ float DimensionFourApi::ReadLatestSignal(const char* pointId, const char* tenant
     httpclient->print(postData);
 
     int httpCode = httpclient->responseStatusCode();
+    debugln(httpCode);
     if (httpCode > 0) {
-        printer->print("[HTTPS] POST... code: ");
-        printer->println(httpCode);
+        debug("[HTTPS] POST... code: ");
+        debugln(httpCode);
 
         if (httpCode == 200) {
             String payload = httpclient->responseBody();
-            printer->println(payload);
+            debugln(payload);
             DynamicJsonDocument response(1024);
             deserializeJson(response, payload);
             auto signal = response["data"]["signalsConnection"]["edges"][0]["node"]["data"]["rawValue"].as<float>();
             return signal;
         } else {
-            printer->println("[HTTPS] POST... failed");
+            debugln("[HTTPS] POST... failed");
             String payload = httpclient->responseBody();
-            printer->println(payload);
+            debugln(payload);
         }
     }
 }
@@ -129,8 +142,9 @@ void DimensionFourApi::PostSignal(float signal, char* timestamp, const char* poi
     variables["timestamp"] = timestamp;
 
     serializeJson(doc, postData);
-    serializeJsonPretty(doc, Serial);
+    debugJson(doc, Serial);
 
+        debugln("Contacting Server");
     httpclient->beginRequest();
     httpclient->post("/graph");
     httpclient->sendHeader(HTTP_HEADER_CONTENT_TYPE, "application/json");
@@ -141,21 +155,18 @@ void DimensionFourApi::PostSignal(float signal, char* timestamp, const char* poi
     httpclient->print(postData);
 
     int httpCode = httpclient->responseStatusCode();
+    debugln(httpCode);
     if (httpCode > 0) {
-        printer->print("[HTTPS] POST... code: ");
-        printer->println(httpCode);
+        debug("[HTTPS] POST... code: ");
+        debugln(httpCode);
 
-        if (httpCode == 200) {
+        if (httpCode == 200 && returnFloat == true) {
             String payload = httpclient->responseBody();
-            printer->println(payload);
+            debugln(payload);
         } else {
-            printer->println("[HTTPS] POST... failed");
+            debugln("[HTTPS] POST... failed");
             String payload = httpclient->responseBody();
-            printer->println(payload);
+            debugln(payload);
         }
     }
-}
-
-String ContactServer(){
-  
 }

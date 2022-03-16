@@ -11,15 +11,14 @@ Realeased into the public domain.
 #include "ArduinoHttpClient.h"
 
 class DimensionFourApi{
-    public:
-        DimensionFourApi();
-        void initStream(Stream *print, HttpClient *client);
-        float ReadLatestSignal(const char* PointId, const char* TenantId, const char* TenantToken, const char* Server);
-        void PostSignal(float Signal, char* timestamp, const char* PointId, const char* TenantId, const char* TenantToken, const char* Server);        
     private:
-        String ContactServer();
         Stream * printer;
         HttpClient * httpclient;
+    public:
+        DimensionFourApi();
+        void InitStream(Stream *print, HttpClient *client);
+        float ReadLatestSignal(const char* PointId, const char* TenantId, const char* TenantToken, const char* Server);
+        void PostSignal(float Signal, char* timestamp, const char* PointId, const char* TenantId, const char* TenantToken, const char* Server);        
 };
 
 #endif
