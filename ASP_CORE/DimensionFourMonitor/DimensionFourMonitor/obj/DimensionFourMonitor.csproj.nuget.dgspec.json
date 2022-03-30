@@ -46,13 +46,9 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
-            "GraphQL.Client": {
+            "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[4.0.2, )"
-            },
-            "GraphQL.Client.Serializer.Newtonsoft": {
-              "target": "Package",
-              "version": "[4.0.2, )"
+              "version": "[13.0.1, )"
             }
           },
           "imports": [

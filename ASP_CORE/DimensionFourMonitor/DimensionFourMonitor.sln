@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31129.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DimensionFourMonitor", "DimensionFourMonitor\DimensionFourMonitor.csproj", "{D5033ACE-4D67-448E-B699-22380D780423}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DimensionFourMonitor", "DimensionFourMonitor\DimensionFourMonitor.csproj", "{9F6D9B04-9961-4019-B739-6F7B355B80FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D5033ACE-4D67-448E-B699-22380D780423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D5033ACE-4D67-448E-B699-22380D780423}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D5033ACE-4D67-448E-B699-22380D780423}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D5033ACE-4D67-448E-B699-22380D780423}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F6D9B04-9961-4019-B739-6F7B355B80FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F6D9B04-9961-4019-B739-6F7B355B80FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F6D9B04-9961-4019-B739-6F7B355B80FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F6D9B04-9961-4019-B739-6F7B355B80FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {D6BD55E1-2D46-4817-8DDB-B7B71C7CE764}
+		SolutionGuid = {AD4718BF-8105-4135-A6EC-EAD171A81CD8}
 	EndGlobalSection
 EndGlobal

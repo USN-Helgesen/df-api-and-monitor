@@ -1,16 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "Y+XXG0QkTZ7j4hJ56azJ85KjO/PUTBc0elkIZwqpwcKvIjUwk3A4Fmfln3wBiInGmMAEPfyVe1TCBQsrsL1zCQ==",
+  "dgSpecHash": "WzwpyBlzUuTUUU4xf/vPucU7jTKY7fQcf1YiZOCBfsuqd3ct+jwBiMK1W6wiFun7UMNdABZrWIb3ye3Dbuq6bQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\Håkon\\Documents\\Python\\Master\\df-api-and-monitor\\ASP_CORE\\DimensionFourMonitor\\DimensionFourMonitor\\DimensionFourMonitor.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Håkon\\.nuget\\packages\\graphql.client\\4.0.2\\graphql.client.4.0.2.nupkg.sha512",
-    "C:\\Users\\Håkon\\.nuget\\packages\\graphql.client.abstractions\\4.0.2\\graphql.client.abstractions.4.0.2.nupkg.sha512",
-    "C:\\Users\\Håkon\\.nuget\\packages\\graphql.client.abstractions.websocket\\4.0.2\\graphql.client.abstractions.websocket.4.0.2.nupkg.sha512",
-    "C:\\Users\\Håkon\\.nuget\\packages\\graphql.client.serializer.newtonsoft\\4.0.2\\graphql.client.serializer.newtonsoft.4.0.2.nupkg.sha512",
-    "C:\\Users\\Håkon\\.nuget\\packages\\graphql.primitives\\4.0.2\\graphql.primitives.4.0.2.nupkg.sha512",
-    "C:\\Users\\Håkon\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
-    "C:\\Users\\Håkon\\.nuget\\packages\\system.reactive\\4.3.2\\system.reactive.4.3.2.nupkg.sha512"
+    "C:\\Users\\Håkon\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512"
   ],
   "logs": []
 }

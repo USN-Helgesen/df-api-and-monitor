@@ -8,10 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GraphQL.Client.Http;
-using GraphQL.Client.Abstractions;
-using GraphQL.Client.Serializer.Newtonsoft;
-using DimensionFourMonitor.Models;
+using System.Net.Http;
+using Newtonsoft.Json;
+using DimensionFourMonitor.Consumers;
 
 namespace DimensionFourMonitor
 {
@@ -27,14 +26,17 @@ namespace DimensionFourMonitor
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IGraphQLClient>(s => new GraphQLHttpClient(Configuration["GraphQLURI"], new NewtonsoftJsonSerializer()));
-            services.AddScoped<QueryList>();
-            services.AddControllers();
-            services.AddRazorPages();
+            services.AddScoped<DFourConsumer>();
+            services.AddHttpClient<DFourConsumer>(s =>
+            {
+                s.BaseAddress = new Uri("https://iot.dimensionfour.io/graph");
+                s.DefaultRequestHeaders.Add("x-tenant-id", "devuser");
+                s.DefaultRequestHeaders.Add("x-tenant-key", "9c58042413a3a4a7db8da75c");
+            });
+            services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -43,11 +45,10 @@ namespace DimensionFourMonitor
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -57,7 +58,9 @@ namespace DimensionFourMonitor
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

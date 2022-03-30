@@ -9,6 +9,7 @@ C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFou
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\bin\Debug\net5.0\DimensionFourMonitor.pdb
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\bin\Debug\net5.0\DimensionFourMonitor.Views.dll
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\bin\Debug\net5.0\DimensionFourMonitor.Views.pdb
+C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\bin\Debug\net5.0\Newtonsoft.Json.dll
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.csprojAssemblyReference.cache
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.AssemblyInfoInputs.cache
@@ -33,8 +34,15 @@ C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFou
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.RazorTargetAssemblyInfo.cache
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.RazorTargetAssemblyInfo.cs
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.Views.pdb
+C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.csproj.CopyComplete
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.dll
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\ref\DimensionFourMonitor.dll
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.pdb
 C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.genruntimeconfig.cache
-C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\DimensionFourMonitor.csproj.CopyComplete
+C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\Razor\Views\Home\Index.cshtml.g.cs
+C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\Razor\Views\Home\Privacy.cshtml.g.cs
+C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\Razor\Views\Shared\Error.cshtml.g.cs
+C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\Razor\Views\Shared\_Layout.cshtml.g.cs
+C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\Razor\Views\Shared\_ValidationScriptsPartial.cshtml.g.cs
+C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\Razor\Views\_ViewImports.cshtml.g.cs
+C:\Users\Håkon\Documents\Python\Master\df-api-and-monitor\ASP_CORE\DimensionFourMonitor\DimensionFourMonitor\obj\Debug\net5.0\Razor\Views\_ViewStart.cshtml.g.cs
