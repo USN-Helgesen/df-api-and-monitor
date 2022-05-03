@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Håkon\\Documents\\Python\\Master\\df-api-and-monitor\\ASP_CORE\\DimensionFourMonitor\\DimensionFourMonitor\\DimensionFourMonitor.csproj": {}
+    "C:\\Users\\Håkon\\source\\repos\\DimensionFourMonitor\\DimensionFourMonitor\\DimensionFourMonitor.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Håkon\\Documents\\Python\\Master\\df-api-and-monitor\\ASP_CORE\\DimensionFourMonitor\\DimensionFourMonitor\\DimensionFourMonitor.csproj": {
+    "C:\\Users\\Håkon\\source\\repos\\DimensionFourMonitor\\DimensionFourMonitor\\DimensionFourMonitor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Håkon\\Documents\\Python\\Master\\df-api-and-monitor\\ASP_CORE\\DimensionFourMonitor\\DimensionFourMonitor\\DimensionFourMonitor.csproj",
+        "projectUniqueName": "C:\\Users\\Håkon\\source\\repos\\DimensionFourMonitor\\DimensionFourMonitor\\DimensionFourMonitor.csproj",
         "projectName": "DimensionFourMonitor",
-        "projectPath": "C:\\Users\\Håkon\\Documents\\Python\\Master\\df-api-and-monitor\\ASP_CORE\\DimensionFourMonitor\\DimensionFourMonitor\\DimensionFourMonitor.csproj",
+        "projectPath": "C:\\Users\\Håkon\\source\\repos\\DimensionFourMonitor\\DimensionFourMonitor\\DimensionFourMonitor.csproj",
         "packagesPath": "C:\\Users\\Håkon\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Håkon\\Documents\\Python\\Master\\df-api-and-monitor\\ASP_CORE\\DimensionFourMonitor\\DimensionFourMonitor\\obj\\",
+        "outputPath": "C:\\Users\\Håkon\\source\\repos\\DimensionFourMonitor\\DimensionFourMonitor\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
@@ -46,10 +46,6 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
-            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
-              "target": "Package",
-              "version": "[5.0.2, )"
-            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.1, )"

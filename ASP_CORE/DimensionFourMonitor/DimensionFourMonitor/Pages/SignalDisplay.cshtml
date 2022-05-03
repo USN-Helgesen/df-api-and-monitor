@@ -1,0 +1,226 @@
+﻿@page
+@model DimensionFourMonitor.Pages.SignalDisplayModel
+@{
+}
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn(['datetime', 'Time']);
+            data.addColumn('number', 'Value');
+
+            var options = {
+                title: 'Signals',
+                curveType: 'function',
+                pointsVisible: true,
+                lineWidth: 3,
+                legend: 'none',
+                hAxis: { title: 'Time' },
+                vAxis: { title: 'Data' },
+                width: '100%',
+                height: '100%',
+                chartArea: { width: '85%', height: '75%' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+            chart.draw(data, options);
+        }
+        function updateChart(id, type, paginate) {
+            if (id != null) {
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: {
+                        id: id,
+                        type: type,
+                        paginate: paginate
+                    },
+                    url: '/SignalDisplay?handler=UpdateSignals',
+                    success: function (result) {
+                        var data = new google.visualization.DataTable();
+                        var items = result;
+                        data.addColumn(['datetime', 'Time']);
+                        data.addColumn('number', 'Value');
+
+                        for (var i = 0; i < items.length; i++) {
+                            var item = items[i];
+                            data.addRow([item.timestamp, Number(item.value)]);
+                        }
+
+                        var options = {
+                            title: 'Signals',
+                            curveType: 'function',
+                            pointsVisible: true,
+                            lineWidth: 3,
+                            legend: 'none',
+                            hAxis: { title: 'Time' },
+                            vAxis: { title: 'Data' },
+                            width: '100%',
+                            height: '100%',
+                            chartArea: { width: '85%', height: '75%' }
+                        };
+
+                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                        chart.draw(data, options);
+                    },
+                    error: function (xhr, status, error) {
+                        var err = eval("(" + xhr.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1 id="header"></h1>
+    <div id="curve_chart" style="width: 800px; height: 650px"></div>
+    <label for="nameList" style="padding-right:24px">Point:</label>
+    <select id="nameList" name="nameList"></select>
+    <label for="paginateList" style="padding-left:50px">Number of Signals:</label>
+    <select id="paginateList" name="paginateList">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="15">15</option>
+        <option value="20">20</option>
+        <option value="25">25</option>
+        <option value="30">30</option>
+        <option value="35">35</option>
+        <option value="40">40</option>
+        <option value="45">45</option>
+        <option value="50">50</option>
+        <option value="55">55</option>
+        <option value="60">60</option>
+        <option value="65">65</option>
+        <option value="70">70</option>
+        <option value="75">75</option>
+        <option value="80">80</option>
+        <option value="85">85</option>
+        <option value="90">90</option>
+        <option value="95">95</option>
+        <option value="100">100</option>
+    </select><br /><br />
+    <label for="typeList">Signal Type:</label>
+    <select id="typeList" name="typeList"></select>
+    <label for="updateCheckBox" style="padding-left:86px">Update Chart:</label>
+    <input type="checkbox" id="updateCheckBox" name="updateCheckBox" /><br /><br />
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        var urlId = urlParams();
+        fillPointsLists(urlId);
+        document.getElementById("nameList").onchange = function () {
+            fillTypeList();
+        }
+        const updateCheckBox = document.querySelector('#updateCheckBox');
+        updateCheckBox.addEventListener('change', () => {
+            if (updateCheckBox.checked == true) {
+                updateInterval = setInterval(dataUpdater, 1000,);
+            } else {
+                clearInterval(updateInterval);
+            }
+        });
+    });
+    function dataUpdater() {
+        var selectName = document.getElementById("nameList");
+        var id = selectName.options[selectName.selectedIndex].value;
+        var selectType = document.getElementById("typeList");
+        var type = selectType.options[selectType.selectedIndex].value;
+        var selectPaginate = document.getElementById("paginateList");
+        var paginate = selectPaginate.options[selectPaginate.selectedIndex].value;
+        updateChart(id, type, paginate);
+    }
+    function urlParams() {
+        const params = (new URL(location)).searchParams;
+        var spaceId = params.get('id')
+        return spaceId;
+    }
+    function fillPointsLists(id) {
+        if (id != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    id: id
+                },
+                url: '/SignalDisplay?handler=Space',
+                success: function (result) {
+                    var space = result;
+                    document.getElementById('header').innerHTML = space.name;
+                    var points = space.points;
+                    for (var i = 0; i < points.length; i++) {
+                        var point = points[i];
+                        var opt = document.createElement('option');
+                        opt.value = point.id;
+                        opt.innerHTML = point.name;
+                        nameList.appendChild(opt);
+                    }
+                    var original = $("#nameList").val();
+                    var options = $("#nameList option");
+                    options.detach().sort(function (a, b) {
+                        var at = $(a).text();
+                        var bt = $(b).text();
+                        return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
+                    });
+                    options.appendTo("#nameList");
+                    $("nameList").val(original);
+
+                    fillTypeList();
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+    function fillTypeList() {
+        var select = document.getElementById("nameList");
+        var id = select.options[select.selectedIndex].value;
+        if (id != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    id: id
+                },
+                url: '/SignalDisplay?handler=Point',
+                success: function (result) {
+                    var types = result.types;
+                    for (var i = 0; i < types.length; i++) {
+                        var type = types[i];
+                        var opt = document.createElement('option');
+                        opt.value = type;
+                        opt.innerHTML = type;
+                        typeList.appendChild(opt);
+                    }
+                    var original = $("#typeList").val();
+                    var options = $("#typeList option");
+                    options.detach().sort(function (a, b) {
+                        var at = $(a).text();
+                        var bt = $(b).text();
+                        return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
+                    });
+                    options.appendTo("#typeList");
+                    $("typeList").val(original);
+
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+</script>

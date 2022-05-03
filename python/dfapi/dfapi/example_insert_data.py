@@ -16,9 +16,9 @@ headers = dfapi.create_header(TENANT_ID, TENANT_KEY)
 
 if __name__ == "__main__":
     while True:
-        value = random.randrange(273,300)
-        b = "KELVINS"
-        c = "Test_Sample"
+        value = random.randrange(10,40)
+        b = "CELSIUS_DEGREES"
+        c = "temperature"
         timestamp = datetime.now()
         dfapi.create_signal(value, b, c, timestamp, POINT_ID, target, headers)
-        time.sleep(10)
+        time.sleep(1)

@@ -150,7 +150,7 @@ def list_spaces(target, headers):
     :return: dict
     """
     query = """query LIST_SPACES_WITH_POINTS {
-        spacesConnection {
+        spaces {
           edges {
             node {
               id
@@ -179,7 +179,7 @@ def list_points(target, headers):
     :return: dict
     """
     query = """query LIST_POINTS_WITH_SPACE {
-        pointsConnection {
+        points {
           edges {
             node {
               id
@@ -211,7 +211,7 @@ def list_signals(point_id, target, headers):
     query = """query LATEST_SIGNALS(
         $pointId: String!
         ){
-          signalsConnection(
+          signals(
             where: {pointId: {_EQ: $pointId}}
             sort: {field: "timestamp", order:DESC}
           ){

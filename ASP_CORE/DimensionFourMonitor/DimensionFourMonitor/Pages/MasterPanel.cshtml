@@ -1,0 +1,159 @@
+﻿@page 
+@model DimensionFourMonitor.Pages.MasterPanelModel
+@{
+    ViewData["Title"] = "Master Display Panel";
+}
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = new google.visualization.DataTable();
+            data.addColumn(['datetime', 'Time']);
+            data.addColumn('number', 'Value');
+
+            var options = {
+                title: 'Signals',
+                curveType: 'function',
+                pointsVisible: true,
+                lineWidth: 3,
+                legend: 'none',
+                hAxis: { title: 'Time' },
+                vAxis: { title: 'Data' },
+                width: '100%',
+                height: '100%',
+                chartArea: { width: '85%', height: '75%' }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+            chart.draw(data, options);
+        }
+        function updateChart(id) {
+            console.log("got this far");
+            if (id != null) {
+                console.log("and this");
+                var type = "testtemp";
+                var paginate = 15;
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: {
+                        id: id,
+                        type: type,
+                        paginate: paginate
+                    },
+                    url: '/MasterPanel?handler=UpdateSignals',
+                    success: function (result) {
+                        var data = new google.visualization.DataTable();
+                        var items = result;
+                        data.addColumn(['datetime', 'Time']);
+                        data.addColumn('number', 'Value');
+
+                        for (var i = 0; i < items.length; i++) {
+                            var item = items[i];
+                            data.addRow([item.timestamp, Number(item.value)]);
+                        }
+
+                        var options = {
+                            title: 'Signals',
+                            curveType: 'function',
+                            pointsVisible: true,
+                            lineWidth: 3,
+                            legend: 'none',
+                            hAxis: { title: 'Time' },
+                            vAxis: { title: 'Data' },
+                            width: '100%',
+                            height: '100%',
+                            chartArea: { width: '85%', height: '75%' }
+                        };
+
+                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                        chart.draw(data, options);
+                    },
+                    error: function (xhr, status, error) {
+                        var err = eval("(" + xhr.responseText + ")");
+                        alert(err.Message);
+                    }
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="row">
+        <div class="column">
+            <h1>Spaces and Points</h1>
+
+            <p>
+                <a asp-action="Create">Create New</a>
+            </p>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            Space Name
+                        </th>
+                        <th>
+                            Space ID
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.spaces)
+                    {
+                        <tr class="space_row">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.id)
+                            </td>
+                        </tr>
+                        <tr class="point_header_row">
+                            <th style="padding-left:50px">
+                                Point Name
+                            </th>
+                            <th style="padding-left:50px">
+                                Point ID
+                            </th>
+                        </tr>
+                        @foreach (var point in item.points)
+                        {
+                            <tr class="point_row">
+                                <td style="padding-left:50px">
+                                    @Html.DisplayFor(modelItem => point.name)
+                                </td>
+                                <td class="point_id", style="padding-left:50px">
+                                    @Html.DisplayFor(modelItem => point.id)
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="column">
+            <div id="curve_chart" style="width: 650px; height: 500px"></div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        $('.space_row').nextUntil('tr.space_row').slideToggle(10);
+        $('.space_row').click(function () {
+            $(this).nextUntil('tr.space_row').slideToggle(400);
+        });
+        $('.point_id').click(function (event) {
+            var id = $(event.target).text().trim();
+            updateChart(id);
+        });
+    });
+</script>

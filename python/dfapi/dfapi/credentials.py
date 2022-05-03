@@ -1,0 +1,4 @@
+TENANT_ID = "devuser"
+TENANT_KEY = "9c58042413a3a4a7db8da75c"
+POINT_ID = "61ea7ac6406bf2319d84bc01"
+SPACE_ID = "61f17605ee3e8dd6a0a4ebf0"

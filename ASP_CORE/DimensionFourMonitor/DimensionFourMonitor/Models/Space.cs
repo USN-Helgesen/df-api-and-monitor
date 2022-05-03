@@ -17,10 +17,21 @@ namespace DimensionFourMonitor.Models
             id = (string)json["id"];
             name = (string)json["name"];
             points = new List<Point>();
-            foreach (JObject jPoint in json["points"])
+            foreach (var jPoint in json["points"]["edges"])
             {
-                Point point = new Point(jPoint);
-                points.Add(point);
+                if (jPoint != null)
+                {
+                    var firstNode = jPoint.First;
+                    if (firstNode != null)
+                    {
+                        var secondNode = firstNode.First;
+                        if (secondNode != null)
+                        {
+                            Point point = new Point(secondNode);
+                            points.Add(point);
+                        }
+                    }
+                }
             }
         }
     }

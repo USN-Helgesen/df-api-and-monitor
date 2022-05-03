@@ -11,10 +11,20 @@ namespace DimensionFourMonitor.Models
     {
         public string id { get; set; }
         public string name { get; set; }
-        public Point(JObject json)
+        public List<string> types { get; set; }
+        public Point(JToken json)
         {
             id = (string)json["id"];
             name = (string)json["name"];
+            types = new List<string>();
+            var metadata = json["metadata"];
+            if (metadata != null && metadata["types"] != null)
+            {
+                foreach(string signalType in metadata["types"])
+                {
+                    types.Add(signalType);
+                }
+            }
         }
     }
 }
