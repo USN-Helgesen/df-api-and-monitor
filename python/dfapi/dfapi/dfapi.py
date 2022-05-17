@@ -314,8 +314,8 @@ def send_post(target, json, headers):
     """
     try:
         res = requests.post(target, json=json, headers=headers)
-    except Exception as e:
-        print("Error!: %s" %e)
+    except Exception as exeption:
+        print("Error!: " + exeption)
 
     if res.status_code != 200:
         print("Send error!")

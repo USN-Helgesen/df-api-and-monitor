@@ -22,19 +22,23 @@ namespace DimensionFourMonitor.Pages
         }
         public void OnGet()
         {
+
         }
         public JsonResult OnGetSpace(string id)
         {
+            _consumer.EstablishCredentials();
             space = _consumer.GetSpace(id).Result;
             return new JsonResult(space);
         }
         public JsonResult OnGetPoint(string id)
         {
+            _consumer.EstablishCredentials();
             point = _consumer.GetPoint(id).Result;
             return new JsonResult(point);
         }
         public JsonResult OnGetUpdateSignals(string id, string type, int paginate)
         {
+            _consumer.EstablishCredentials();
             signals = _consumer.GetSignals(id, type, paginate).Result;
             return new JsonResult(signals);
         }

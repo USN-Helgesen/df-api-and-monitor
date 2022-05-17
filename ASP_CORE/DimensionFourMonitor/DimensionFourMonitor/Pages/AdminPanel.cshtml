@@ -1,25 +1,520 @@
 ﻿@page
 @model DimensionFourMonitor.Pages.AdminPanelModel
 @{
+    @using DimensionFourMonitor.Models;
+
+    void SubList(Space space)
+    {
+        <ul>
+            <li class="space_row" id="@space.id">@Html.DisplayFor(modelItem => space.name)</li>
+            @if (space.subspaces != null)
+            {
+                @foreach (var item in space.subspaces)
+                {
+                    SubList(item);
+                }
+            }
+        </ul>
+    }
+
+
 }
 <html>
 <head>
 
 </head>
 <body>
-    <label></label>
-    <input />
-    <label></label>
-    <input /><br /><br />
-    <label></label>
-    <select /><br /><br />
-    <label></label>
-    <input />
-    <label></label>
-    <input />
-    <label></label>
-    <input />
-    <label></label>
-    <input />
+    <h1>Admin Panel</h1>
+    <p>Please select an action from the menu:</p>
+    <select id="actionSelect" name="actionSelect">
+        <option style="display:none" disabled selected>-- Select Action --</option>
+        <option value="createSpace">Create Space</option>
+        <option value="createSubSpace">Create Subspace</option>
+        <option value="deleteSpace">Delete Space</option>
+        <option value="createPoint">Create Point</option>
+        <option value="updateAddTypePoint">Add Signal Type to Point</option>
+        <option value="updateRemoveTypePoint">Remove Signal Type from Point</option>
+        <option value="deletePoint">Delete Point</option>
+    </select>
+    <div id="createSpaceDiv" style="display: none;">
+        <h4>Create Space</h4>
+        <label>Space Name:</label>
+        <input type="text" id="createSpaceInput" name="createSpaceInput" /><br />
+        <button id="createSpaceButton" onclick="createSpace()">Create</button>
+    </div>
+    <div id="createSubSpaceDiv" style="display: none;">
+        <h4>Create Subspace</h4>
+        <div class="row">
+            <div class="column" style="padding-left:50px">
+                <label>Current Selected Parent Space:</label>
+                <label id="subSpaceParentNameLabel"></label>
+                <label id="subSpaceParentIdLabel" style="display: none;"></label><br />
+                <label>Sub Space Name:</label>
+                <input type="text" id="createSubSpaceInput" name="createSubSpaceInput" /><br />
+                <button id="createSubSpaceButton" onclick="createSubSpace()">Create</button>
+            </div>
+            <div class="column" style="padding-left:50px">
+                <p>Please select a parent space from the list:</p>
+                @foreach (var item in Model.spaces)
+                {
+                    SubList(item);
+
+                }
+            </div>
+        </div>
+    </div>
+    <div id="deleteSpaceDiv" style="display: none;">
+        <h4>Delete Space</h4>
+        <div class="row">
+            <div class="column">
+                <label>Current Selected Space For Deletion:</label>
+                <label id="deleteSpaceNameLabel"></label>
+                <label id="deleteSpaceIdLabel" style="display: none;"></label><br />
+                <button id="deleteSpaceButton" onclick="deleteSpace()">DELETE</button>
+            </div>
+            <div class="column" style="padding-left:50px">
+                <p>Please select a space from the list:</p>
+                @foreach (var item in Model.spaces)
+                {
+                    SubList(item);
+
+                }
+            </div>
+        </div>
+    </div>
+    <div id="createPointDiv" style="display: none;">
+        <h4>Create Point</h4>
+        <div class="row">
+            <div class="column">
+                <label>Current Selected Parent Space:</label>
+                <label id="createPointParentNameLabel"></label>
+                <label id="createPointParentIdLabel" style="display: none;"></label><br />
+                <label>Point Name:</label>
+                <input type="text" id="createPointInput" name="createPointInput" /><br />
+                <button id="createPointButton" onclick="createPoint()">Create</button>
+            </div>
+            <div class="column" style="padding-left:50px">
+                <p>Please select a parent space from the list:</p>
+                @foreach (var item in Model.spaces)
+                {
+                    SubList(item);
+
+                }
+            </div>
+        </div>
+    </div>
+    <div id="updateAddPointDiv" style="display: none;">
+        <h4>Add Signal Type to Point</h4>
+        <div class="row">
+            <div class="column">
+                <label>Current Selected Parent Space:</label>
+                <label id="addTypeParentNameLabel"></label>
+                <label id="addTypeParentIdLabel" style="display: none;"></label><br />
+                <label>Point:</label>
+                <select id="addTypePointSelect" name="addTypePointSelect"></select><br />
+                <label>Type:</label>
+                <input type="text" id="addTypeInput" name="addTypeInput" /><br />
+                <button id="addTypePointButton" onclick="addPointType()">Add</button>
+            </div>
+            <div class="column" style="padding-left:50px">
+                <p>Please select a parent space from the list:</p>
+                @foreach (var item in Model.spaces)
+                {
+                    SubList(item);
+
+                }
+            </div>
+        </div>
+    </div>
+    <div id="updateRemovePointDiv" style="display: none;">
+        <h4>Remove Signal Type from Point</h4>
+        <div class="row">
+            <div class="column">
+                <label>Current Selected Parent Space:</label>
+                <label id="removeTypeParentNameLabel"></label>
+                <label id="removeTypeParentIdLabel" style="display: none;"></label><br />
+                <label>Point:</label>
+                <select id="removeTypePointSelect" name="removeTypePointSelect"></select><br />
+                <label>Type:</label>
+                <select id="removeTypeSelect" name="removeTypeSelect"></select><br />
+                <button id="removeTypePointButton" onclick="removePointType()">Remove</button>
+            </div>
+            <div class="column" style="padding-left:50px">
+                <p>Please select a parent space from the list:</p>
+                @foreach (var item in Model.spaces)
+                {
+                    SubList(item);
+
+                }
+            </div>
+        </div>
+    </div>
+    <div id="deletePointDiv" style="display: none;">
+        <h4>Delete Point</h4>
+        <div class="row">
+            <div class="column">
+                <label>Current Selected Parent Space:</label>
+                <label id="deletePointParentNameLabel"></label><br />
+                <label>Point:</label>
+                <select id="deletePointSelect" name="deletePointSelect"></select><br />
+                <button id="deletePointButton" onclick="deletePoint()">DELETE</button>
+            </div>
+            <div class="column" style="padding-left:50px">
+                <p>Please select a parent space from the list:</p>
+                @foreach (var item in Model.spaces)
+                {
+                    SubList(item);
+
+                }
+            </div>
+        </div>
+    </div>
 </body>
 </html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        document.getElementById("actionSelect").onchange = function () {
+            displayAction(document.getElementById("actionSelect").value);
+        }
+        $('.space_row').nextUntil('tr.space_row').slideToggle(10);
+        $('.space_row').click(function () {
+            $(this).nextUntil('tr.space_row').slideToggle(400);
+
+        });
+        $('.space_row').dblclick(function (event) {
+            var name = $(event.target).text();
+            var id = $(event.target).attr('id');
+            document.getElementById("subSpaceParentNameLabel").innerHTML = name;
+            document.getElementById("deleteSpaceNameLabel").innerHTML = name;
+            document.getElementById("createPointParentNameLabel").innerHTML = name;
+            document.getElementById("subSpaceParentIdLabel").innerHTML = id;
+            document.getElementById("deleteSpaceIdLabel").innerHTML = id;
+            document.getElementById("createPointParentIdLabel").innerHTML = id;
+            var pointAction = document.getElementById("actionSelect").value
+            switch (pointAction) {
+                case "deletePoint":
+                    document.getElementById("deletePointParentNameLabel").innerHTML = name;
+                    var listId = "deletePointSelect";
+                    fillPointsLists(id, listId);
+                    break;
+                case "updateAddTypePoint":
+                    document.getElementById("addTypeParentNameLabel").innerHTML = name;
+                    var listId = "addTypePointSelect";
+                    fillPointsLists(id, listId);
+                    break;
+                case "updateRemoveTypePoint":
+                    document.getElementById("removeTypeParentNameLabel").innerHTML = name;
+                    var pointListId = "removeTypePointSelect";
+                    var listId = "removeTypeSelect";
+                    fillPointsLists(id, pointListId).then(
+                        setTimeout(
+                            fillTypeList(listId, pointListId), 1500)
+                    );
+                    break;
+
+            }
+        });
+        document.getElementById("addTypePointSelect").onchange = function () {
+
+        }
+        document.getElementById("removeTypePointSelect").onchange = function () {
+            var listId = "removeTypeSelect";
+            var pointListId = "removeTypePointSelect";
+            fillTypeList(listId, pointListId);
+        }
+    });
+
+    function displayAction(target) {
+        console.log(target);
+        var x;
+        x = document.getElementById("createSpaceDiv");
+        x.style.display = "none";
+        x = document.getElementById("createSubSpaceDiv");
+        x.style.display = "none";
+        x = document.getElementById("deleteSpaceDiv");
+        x.style.display = "none";
+        x = document.getElementById("createPointDiv");
+        x.style.display = "none";
+        x = document.getElementById("updateAddPointDiv");
+        x.style.display = "none";
+        x = document.getElementById("updateRemovePointDiv");
+        x.style.display = "none";
+        x = document.getElementById("deletePointDiv");
+        x.style.display = "none";
+        switch (target) {
+            case "createSpace":
+                x = document.getElementById("createSpaceDiv");
+                x.style.display = "block";
+                break;
+            case "createSubSpace":
+                x = document.getElementById("createSubSpaceDiv");
+                x.style.display = "block";
+                break;
+            case "deleteSpace":
+                x = document.getElementById("deleteSpaceDiv");
+                x.style.display = "block";
+                break;
+            case "createPoint":
+                x = document.getElementById("createPointDiv");
+                x.style.display = "block";
+                break;
+            case "updateAddTypePoint":
+                x = document.getElementById("updateAddPointDiv");
+                x.style.display = "block";
+                break;
+            case "updateRemoveTypePoint":
+                x = document.getElementById("updateRemovePointDiv");
+                x.style.display = "block";
+                break;
+            case "deletePoint":
+                x = document.getElementById("deletePointDiv");
+                x.style.display = "block";
+                break;
+        }
+    }
+
+    function createSpace() {
+        var spaceName = document.getElementById("createSpaceInput").value;
+        if (spaceName != null) {
+            var parentId = "";
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    spaceName: spaceName,
+                    parentId: parentId
+                },
+                url: '/AdminPanel?handler=CreateSpace',
+                success: function (result) {
+                    
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+    function createSubSpace() {
+        var spaceName = document.getElementById("createSubSpaceInput").value;
+        var parentId = document.getElementById("subSpaceParentIdLabel").innerHTML;
+        if (spaceName != null && parentId != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    spaceName: spaceName,
+                    parentId: parentId
+                },
+                url: '/AdminPanel?handler=CreateSpace',
+                success: function (result) {
+
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+    function deleteSpace() {
+        var spaceId = document.getElementById("deleteSpaceIdLabel").innerHTML;
+        if (spaceId != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    spaceId: spaceId
+                },
+                url: '/AdminPanel?handler=DeleteSpace',
+                success: function (result) {
+
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+    function createPoint() {
+        var pointName = document.getElementById("createPointInput").value;
+        var parentId = document.getElementById("createPointParentIdLabel").innerHTML;
+        if (pointName != null && parentId != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    pointName: pointName,
+                    parentId: parentId
+                },
+                url: '/AdminPanel?handler=CreatePoint',
+                success: function (result) {
+
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+    function addPointType() {
+        var select = document.getElementById("addTypePointSelect");
+        var pointId = select.options[select.selectedIndex].value;
+        var type = document.getElementById("addTypeInput").value;
+        if (pointId != null && type != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    pointId: pointId,
+                    type: type
+                },
+                url: '/AdminPanel?handler=AddPointTypes',
+                success: function (result) {
+
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+    function removePointType() {
+        var select = document.getElementById("removeTypePointSelect");
+        var pointId = select.options[select.selectedIndex].value;
+
+        select = document.getElementById("removeTypeSelect");
+        var type = select.options[select.selectedIndex].value;
+        if (pointId != null && type != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    pointId: pointId,
+                    type: type
+                },
+                url: '/AdminPanel?handler=RemovePointTypes',
+                success: function (result) {
+
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+    function deletePoint() {
+        var select = document.getElementById("deletePointSelect");
+        var pointId = select.options[select.selectedIndex].value;
+        if (pointId != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    pointId: pointId
+                },
+                url: '/AdminPanel?handler=DeletePoint',
+                success: function (result) {
+
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+    async function fillPointsLists(id, listId) {
+        if (id != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    id: id
+                },
+                url: '/AdminPanel?handler=Space',
+                success: function (result) {
+                    var space = result;
+                    var points = space.points;
+                    var pointsList = document.getElementById(listId);
+                    pointsList.innerHTML = "";
+                    for (var i = 0; i < points.length; i++) {
+                        var point = points[i];
+                        var opt = document.createElement('option');
+                        opt.value = point.id;
+                        opt.innerHTML = point.name;
+                        pointsList.appendChild(opt);
+                    }
+                    var original = $("#" + listId).val();
+                    var options = $("#" + listId + " option");
+                    options.detach().sort(function (a, b) {
+                        var at = $(a).text();
+                        var bt = $(b).text();
+                        return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
+                    });
+                    options.appendTo("#" + listId);
+                    $(listId).val(original);
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+    async function fillTypeList(listId, pointListId) {
+        var select = document.getElementById(pointListId);
+        var id = select.options[select.selectedIndex].value;
+        var typeList = document.getElementById(listId);
+        if (id != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    id: id
+                },
+                url: '/SignalDisplay?handler=Point',
+                success: function (result) {
+                    if (result.types != null) {
+                        typeList.innerHTML = "";
+                        var types = result.types;
+                        for (var i = 0; i < types.length; i++) {
+                            var type = types[i];
+                            var opt = document.createElement('option');
+                            opt.value = type;
+                            opt.innerHTML = type;
+                            typeList.appendChild(opt);
+                        }
+                        var options = $("#" + listId + " option");
+                        options.detach().sort(function (a, b) {
+                            var at = $(a).text();
+                            var bt = $(b).text();
+                            return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
+                        });
+                        options.appendTo("#" + listId);
+                    } else {
+                        typeList.innerHTML = "";
+                    }
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+    }
+</script>

@@ -1,71 +1,60 @@
 ﻿@page
 @model DimensionFourMonitor.Pages.SpacesListModel
 @{
-}
-<html>
-<head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-</head>
-<body>
-    <h1>Spaces and Points</h1>
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    Space Name
-                </th>
-                <th>
-                    Space ID
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.spaces)
+    @using DimensionFourMonitor.Models;
+
+    void SubList(Space space)
+    {
+        <ul>
+            <li class="space_row" id="@space.id">@Html.DisplayFor(modelItem => space.name)</li>
+            @if(space.subspaces != null)
             {
-                <tr class="space_row">
-                    <td>
-                        @Html.DisplayFor(modelItem => item.name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.id)
-                    </td>
-                </tr>
-                <tr class="point_header_row">
-                    <th style="padding-left:50px">
-                        Point Name
-                    </th>
-                    <th style="padding-left:50px">
-                        Point ID
-                    </th>
-                </tr>
-                @foreach (var point in item.points)
+                @foreach(var item in space.subspaces)
                 {
-                    <tr class="point_row">
-                        <td style="padding-left:50px">
-                            @Html.DisplayFor(modelItem => point.name)
-                        </td>
-                        <td class="point_id" , style="padding-left:50px">
-                            @Html.DisplayFor(modelItem => point.id)
-                        </td>
-                    </tr>
+                    SubList(item);
                 }
             }
-        </tbody>
-    </table>
-</body>
+        </ul>
+        }
+
+
+}
+    <html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+    <body>
+        <h1>Spaces and Points</h1>
+        <div class="row">
+            <div class="column">
+                <h3>Spaces</h3>
+                @foreach (var item in Model.spaces)
+                {
+                    SubList(item);
+
+                }
+            </div>
+
+            <div class"column">
+                <h3>Points</h3>
+                <ul class="points_list" id="points_list">
+
+                </ul>
+            </div>
+        </div>
+    </body>
 </html>
 <script>
     $(document).ready(function () {
         $('.space_row').nextUntil('tr.space_row').slideToggle(10);
         $('.space_row').click(function () {
+            var spaceId = $(event.target).attr('id');
+            fillPointsLists(spaceId)
             $(this).nextUntil('tr.space_row').slideToggle(400);
+
         });
-        $('.point_id').click(function (event) {
-            var id = $(event.target).text().trim();
+        $('.space_row').dblclick(function (event) {
+            var id = $(event.target).attr('id');
             redirectPage(id);
         });
     });
@@ -73,5 +62,47 @@
         var base_url = window.location.origin;
         var path = "/SignalDisplay?id=" + id;
         window.location.href = base_url + path;
+    }
+
+    function fillPointsLists(id) {
+        if (id != null) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: {
+                    id: id
+                },
+                url: '/SpacesDisplay?handler=Space',
+                success: function (result) {
+                    var space = result;
+                    var points = space.points;
+                    var pointsList = document.getElementById("points_list");
+                    var first = pointsList.firstElementChild;
+                    while (first) {
+                        first.remove();
+                        first = pointsList.firstElementChild;
+                    }
+                    for (var i = 0; i < points.length; i++) {
+                        var point = points[i];
+                        var li = document.createElement("li");
+                        li.value = point.id;
+                        li.innerHTML = point.name;
+                        pointsList.appendChild(li);
+                    }
+                    var options = $("#nameList option");
+                    options.detach().sort(function (a, b) {
+                        var at = $(a).text();
+                        var bt = $(b).text();
+                        return (at > bt) ? 1 : ((at < bt) ? -1 : 0);
+                    });
+                    options.appendTo("#nameList");
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
     }
 </script>

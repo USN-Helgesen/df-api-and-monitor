@@ -197,6 +197,7 @@
                 },
                 url: '/SignalDisplay?handler=Point',
                 success: function (result) {
+                    typeList.innerHTML = "";
                     var types = result.types;
                     for (var i = 0; i < types.length; i++) {
                         var type = types[i];

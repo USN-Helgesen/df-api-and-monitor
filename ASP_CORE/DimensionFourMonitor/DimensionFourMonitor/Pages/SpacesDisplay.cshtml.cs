@@ -12,6 +12,7 @@ namespace DimensionFourMonitor.Pages
     public class SpacesListModel : PageModel
     {
         private readonly DFourConsumer _consumer;
+        public Space space;
         public List<Space> spaces = new List<Space>();
         public SpacesListModel(DFourConsumer consumer)
         {
@@ -23,8 +24,15 @@ namespace DimensionFourMonitor.Pages
         }
         public List<Space> PrepSpaces()
         {
-            spaces = _consumer.GetAllSpaces().Result;
+            _consumer.EstablishCredentials();
+            spaces = _consumer.GetTopLevelSpaces().Result;
             return spaces;
+        }
+        public JsonResult OnGetSpace(string id)
+        {
+            _consumer.EstablishCredentials();
+            space = _consumer.GetSpace(id).Result;
+            return new JsonResult(space);
         }
     }
 }

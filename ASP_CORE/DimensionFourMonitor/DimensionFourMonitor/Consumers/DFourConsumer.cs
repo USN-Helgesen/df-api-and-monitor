@@ -6,17 +6,33 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.AspNetCore.Http;
 using DimensionFourMonitor.Models;
 
 namespace DimensionFourMonitor.Consumers
 {
     public class DFourConsumer
     {
-        public readonly HttpClient _httpClient;
-        
-        public DFourConsumer(HttpClient httpClient)
+        private HttpClient _httpClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ISession _session;
+
+        public DFourConsumer(HttpClient httpClient, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
+            _httpContextAccessor = httpContextAccessor;
+            _session = _httpContextAccessor.HttpContext.Session;
+
+        }
+        public void EstablishCredentials()
+        {
+            if(_session.GetString("Tenant Id") != null || _session.GetString("Tenant Key") != null)
+            {
+                string tenantId = _session.GetString("Tenant Id");
+                string tenantKey = _session.GetString("Tenant Key");
+                _httpClient.DefaultRequestHeaders.Add("x-tenant-id", tenantId);
+                _httpClient.DefaultRequestHeaders.Add("x-tenant-key", tenantKey);
+            }
         }
         public async Task<List<Space>> GetAllSpaces()
         {
@@ -25,22 +41,22 @@ namespace DimensionFourMonitor.Consumers
                 query = @"query LIST_SPACES_WITH_POINTS {
                     spaces {
                         edges {
-                        node {
-                            id
-                            name
-                            points {
-                                edges {
-                                    node {
-                                        id
-                                        name
+                            node {
+                                id
+                                name
+                                points {
+                                    edges {
+                                        node {
+                                            id
+                                            name
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                    }
                 }",
-                variables = new {}
+                variables = new { }
             };
 
             var request = new HttpRequestMessage
@@ -49,6 +65,76 @@ namespace DimensionFourMonitor.Consumers
                 Content = new StringContent(JsonConvert.SerializeObject(queryObject), Encoding.UTF8, "application/json")
             };
 
+            dynamic responseObj;
+
+            using (var response = await _httpClient.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+
+                var responseString = await response.Content.ReadAsStringAsync();
+                responseObj = JsonConvert.DeserializeObject<dynamic>(responseString);
+                Console.WriteLine(responseObj);
+            }
+            List<Space> spaceList = new List<Space>();
+            foreach (JObject element in responseObj.data.spaces.edges)
+            {
+                if (element != null)
+                {
+                    var firstNode = element.First;
+                    if (firstNode != null)
+                    {
+                        var secondNode = firstNode.First;
+                        if (secondNode != null)
+                        {
+                            Space space = new Space(secondNode, this);
+                            spaceList.Add(space);
+                        }
+                    }
+                }
+            }
+            return spaceList;
+        }
+        public async Task<List<Space>> GetTopLevelSpaces()
+        {
+            var queryObject = new
+            {
+                query = @"query LIST_SPACES_WITH_POINTS {
+                    spaces {
+                        edges {
+                            node {
+                                id
+                                name
+                                parent {
+                                    id
+                                }
+                                children {
+                                    edges {
+                                        node {
+                                            id
+                                            name
+                                        }
+                                    }
+                                }
+                                points {
+                                    edges {
+                                        node {
+                                            id
+                                            name
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }",
+                variables = new { }
+            };
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonConvert.SerializeObject(queryObject), Encoding.UTF8, "application/json")
+            };
             dynamic responseObj;
 
             using (var response = await _httpClient.SendAsync(request))
@@ -67,9 +153,9 @@ namespace DimensionFourMonitor.Consumers
                     if (firstNode != null)
                     {
                         var secondNode = firstNode.First;
-                        if (secondNode != null)
+                        if (secondNode != null && secondNode["parent"].HasValues == false)
                         {
-                            Space space = new Space(secondNode);
+                            Space space = new Space(secondNode, this);
                             spaceList.Add(space);
                         }
                     }
@@ -89,6 +175,13 @@ namespace DimensionFourMonitor.Consumers
                                   node {
                                     id
                                     name
+                                    children {
+                                        edges {
+                                            node {
+                                                id
+                                            }
+                                        }
+                                    }
                                     points {
                                       edges {
                                         node {
@@ -99,7 +192,7 @@ namespace DimensionFourMonitor.Consumers
                                     }
                                   }
                                 }
-                                }
+                              }
                             }",
                 variables = new
                 {
@@ -132,7 +225,7 @@ namespace DimensionFourMonitor.Consumers
                         var secondNode = firstNode.First;
                         if (secondNode != null)
                         {
-                            space = new Space(secondNode);
+                            space = new Space(secondNode, this);
                         }
                     }
                 }
@@ -283,6 +376,272 @@ namespace DimensionFourMonitor.Consumers
                 }
             }
             return signalList;
+        }
+        public async Task<bool> CreateSpace(string spaceName, string parentSpaceId)
+        {
+            var queryObject = new
+            {
+                query = @"mutation CREATE_SPACE (
+                            $parentId: ID!
+                            $spaceName: String!
+                          ){
+                            space {
+                              create(
+                                input: {
+                                  parentId: $parentId
+                                  name: $spaceName
+                                }){
+                                  id
+                                  name
+                                }
+                              }
+                            }",
+                variables = new
+                {
+                    parentId = parentSpaceId,
+                    spaceName = spaceName
+                }
+            };
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonConvert.SerializeObject(queryObject), Encoding.UTF8, "application/json")
+            };
+
+            dynamic responseObj;
+
+            using (var response = await _httpClient.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+
+                var responseString = await response.Content.ReadAsStringAsync();
+                responseObj = JsonConvert.DeserializeObject<dynamic>(responseString);
+            }
+            bool responseSuccessBool;
+            if(responseObj["errors"] != null)
+            {
+                responseSuccessBool = false;
+            }
+            else
+            {
+                responseSuccessBool = true;
+            }
+            return responseSuccessBool;
+        }
+        public async Task<bool> CreatePoint(string pointName, string spaceId)
+        {
+            var queryObject = new
+            {
+                query = @"mutation CREATE_POINT (
+                            $spaceId: ID!
+                            $pointName: String!
+                          ){
+                            point {
+                              create(
+                                input: {
+                                  spaceId: $spaceId
+                                  name: $pointName
+                                }
+                              ) {
+                                id
+                                name
+                              }
+                            }
+                          }",
+                variables = new
+                {
+                    pointName = pointName,
+                    spaceId = spaceId
+                }
+            };
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonConvert.SerializeObject(queryObject), Encoding.UTF8, "application/json")
+            };
+
+            dynamic responseObj;
+
+            using (var response = await _httpClient.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+
+                var responseString = await response.Content.ReadAsStringAsync();
+                responseObj = JsonConvert.DeserializeObject<dynamic>(responseString);
+            }
+            bool responseSuccessBool;
+            if (responseObj["errors"] != null)
+            {
+                responseSuccessBool = false;
+            }
+            else
+            {
+                responseSuccessBool = true;
+            }
+            return responseSuccessBool;
+        }
+        public async Task<bool> UpdatePointTypes(string pointId, List<string> typeList)
+        {
+            var typeDict = new SortedDictionary<string, List<string>>
+            {
+                {"types", typeList }
+            };
+            var queryObject = new
+            {
+                query = @"mutation UPDATE_METADATA (
+                            $pointId: ID!
+                            $typeList: JSONObject!
+                          ){
+                            point {
+                              update(
+                                input: {
+                                  id: $pointId
+                                  point: { metadata: $typeList }
+                                }
+                              ) {
+                                id
+                                metadata
+                              }
+                            }
+                          }",
+                variables = new
+                {
+                    pointId = pointId,
+                    typeList = typeDict
+                }
+            };
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonConvert.SerializeObject(queryObject), Encoding.UTF8, "application/json")
+            };
+
+            dynamic responseObj;
+
+            using (var response = await _httpClient.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+
+                var responseString = await response.Content.ReadAsStringAsync();
+                responseObj = JsonConvert.DeserializeObject<dynamic>(responseString);
+            }
+
+            bool responseSuccessBool;
+            if (responseObj["errors"] != null)
+            {
+                responseSuccessBool = false;
+            }
+            else
+            {
+                responseSuccessBool = true;
+            }
+            return responseSuccessBool;
+        }
+        public async Task<bool> DeleteSpace(string spaceId)
+        {
+            var queryObject = new
+            {
+                query = @"mutation DELETE_SPACE (
+                            $spaceId: ID!
+                          ){
+                            space {
+                              delete(input: {
+                                id: $spaceId
+                              }) {
+                                id
+                              }
+                            }
+                          }",
+                variables = new
+                {
+                    spaceId = spaceId
+                }
+            };
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonConvert.SerializeObject(queryObject), Encoding.UTF8, "application/json")
+            };
+
+            dynamic responseObj;
+
+            using (var response = await _httpClient.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+
+                var responseString = await response.Content.ReadAsStringAsync();
+                responseObj = JsonConvert.DeserializeObject<dynamic>(responseString);
+            }
+
+            bool responseSuccessBool;
+            if (responseObj["errors"] != null)
+            {
+                Console.WriteLine("failed");
+                Console.WriteLine(responseObj);
+                responseSuccessBool = false;
+            }
+            else
+            {
+                Console.WriteLine("Success");
+                Console.WriteLine(responseObj);
+                responseSuccessBool = true;
+            }
+            return responseSuccessBool;
+        }
+        public async Task<bool> DeletePoint(string pointId)
+        {
+            var queryObject = new
+            {
+                query = @"mutation DELETE_POINT (
+                            $pointId: ID!
+                          ){
+                            point {
+                              delete(input: { 
+                                id: $pointId
+                              }) {
+                                id
+                              }
+                            }
+                          }",
+                variables = new
+                {
+                    pointId = pointId
+                }
+            };
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonConvert.SerializeObject(queryObject), Encoding.UTF8, "application/json")
+            };
+
+            dynamic responseObj;
+
+            using (var response = await _httpClient.SendAsync(request))
+            {
+                response.EnsureSuccessStatusCode();
+
+                var responseString = await response.Content.ReadAsStringAsync();
+                responseObj = JsonConvert.DeserializeObject<dynamic>(responseString);
+            }
+
+            bool responseSuccessBool;
+            if (responseObj["errors"] != null)
+            {
+                Console.WriteLine("failed");
+                Console.WriteLine(responseObj);
+                responseSuccessBool = false;
+            }
+            else
+            {
+                Console.WriteLine("Success");
+                Console.WriteLine(responseObj);
+                responseSuccessBool = true;
+            }
+            return responseSuccessBool;
         }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace DimensionFourMonitor.Pages
 {
@@ -20,6 +21,13 @@ namespace DimensionFourMonitor.Pages
         public void OnGet()
         {
 
+        }
+        public void OnGetCreateCredentials(string tenantId, string tenantKey)
+        {
+            Console.WriteLine(tenantId);
+            Console.WriteLine(tenantKey);
+            HttpContext.Session.SetString("Tenant Id", tenantId);
+            HttpContext.Session.SetString("Tenant Key", tenantKey);
         }
     }
 }

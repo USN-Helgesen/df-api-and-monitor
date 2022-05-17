@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DimensionFourMonitor.Consumers;
+using Microsoft.AspNetCore.Http;
 
 namespace DimensionFourMonitor
 {
@@ -25,12 +26,13 @@ namespace DimensionFourMonitor
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+            services.AddSession();
+            services.AddMemoryCache();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<DFourConsumer>();
             services.AddHttpClient<DFourConsumer>(s =>
             {
                 s.BaseAddress = new Uri("https://iot.dimensionfour.io/graph");
-                s.DefaultRequestHeaders.Add("x-tenant-id", "devuser");
-                s.DefaultRequestHeaders.Add("x-tenant-key", "9c58042413a3a4a7db8da75c");
             });
         }
 
@@ -54,6 +56,8 @@ namespace DimensionFourMonitor
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
