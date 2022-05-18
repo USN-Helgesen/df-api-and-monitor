@@ -18,7 +18,7 @@ if __name__ == "__main__":
     while True:
         value = random.randrange(10,40)
         b = "CELSIUS_DEGREES"
-        c = "temperature"
+        c = "Temperature"
         timestamp = datetime.now()
         dfapi.create_signal(value, b, c, timestamp, POINT_ID, target, headers)
-        time.sleep(1)
+        time.sleep(20)
